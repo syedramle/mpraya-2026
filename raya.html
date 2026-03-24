@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Terpaling RAYA 2026 | Claim Duit Raya + Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a2f1f 0%, #1a4a2a 50%, #0e3a22 100%);
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            padding: 16px;
+        }
+        body { user-select: none; -webkit-user-select: none; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(45deg, rgba(255,215,0,0.04) 0px, rgba(255,215,0,0.04) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .vault-card {
+            max-width: 600px;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(139,69,19,0.45));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 60px;
+            padding: 28px 22px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,215,0,0.65);
+        }
+        .captcha-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .captcha-modal {
+            background: linear-gradient(145deg, #1e3a2a, #0e2a1a);
+            border-radius: 60px;
+            padding: 35px 28px;
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+            border: 2px solid #ffd966;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .captcha-modal h3 {
+            color: #ffd966;
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .captcha-modal p {
+            color: #f0e6c5;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .captcha-question {
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 50px;
+            margin: 15px 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd966;
+            font-family: monospace;
+        }
+        .captcha-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.2rem;
+            text-align: center;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid #ffd966;
+            border-radius: 50px;
+            color: #1e3a2a;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .verify-start-btn {
+            background: linear-gradient(95deg, #ffd966, #ffaa33);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 15px;
+            cursor: pointer;
+            width: 100%;
+            color: #1e3a2a;
+        }
+        .captcha-error {
+            color: #ff8888;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .ketupat-icon {
+            font-size: 58px;
+            animation: gentleSpin 12s infinite linear;
+            display: inline-block;
+        }
+        @keyframes gentleSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 {
+            font-family: 'Amiri', serif;
+            font-size: 2.4rem;
+            color: #ffdb70;
+            text-shadow: 0 0 12px rgba(255,215,0,0.6);
+            margin: 8px 0 4px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            color: rgba(255,250,210,0.92);
+            font-size: 0.8rem;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.6);
+            border-radius: 80px;
+            padding: 8px 16px;
+            margin-bottom: 25px;
+            gap: 12px;
+            border: 1px solid rgba(255,215,0,0.35);
+        }
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            font-size: 0.7rem;
+            color: #ffdb70;
+            font-weight: 600;
+        }
+        .stat-number {
+            font-weight: 800;
+            font-size: 1.3rem;
+            display: block;
+            color: white;
+        }
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: rgba(255,215,0,0.45);
+            border-radius: 3px;
+        }
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: #2c2c2c;
+            border: 2px solid #ffdb70;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            font-weight: bold;
+            color: #ffdb70;
+        }
+        .step.active .step-number {
+            background: #ffdb70;
+            color: #1a4a2a;
+            box-shadow: 0 0 18px #ffdb70;
+            transform: scale(1.08);
+        }
+        .step.completed .step-number {
+            background: #2e7d32;
+            border-color: #81c784;
+            color: white;
+        }
+        .step-label {
+            font-size: 0.65rem;
+            color: rgba(255,245,200,0.8);
+        }
+        .step.active .step-label {
+            color: #ffdb70;
+            font-weight: 600;
+        }
+        .puzzle-section {
+            background: rgba(0,0,0,0.5);
+            border-radius: 44px;
+            padding: 24px 18px;
+            margin-bottom: 22px;
+        }
+        .option-btn {
+            background: linear-gradient(115deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2));
+            border: 1px solid rgba(255,215,0,0.7);
+            padding: 12px 16px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            margin: 8px 0;
+            transition: 0.2s;
+        }
+        .option-btn:active { transform: scale(0.97); background: rgba(255,215,0,0.5);}
+        .number-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.4rem;
+            text-align: center;
+            background: rgba(0,0,0,0.75);
+            border: 2px solid #ffdb70;
+            border-radius: 60px;
+            color: #ffdb70;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+        .vault-door {
+            background: linear-gradient(145deg, #5a3e1b, #3e2a12);
+            border-radius: 38px;
+            padding: 20px;
+            text-align: center;
+        }
+        .door-handle {
+            width: 58px;
+            height: 58px;
+            background: radial-gradient(circle, #ffdb70, #b8860b);
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            animation: softPulse 1.6s infinite;
+        }
+        @keyframes softPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #ffdb70 0%, #ffdb70 var(--fill), #3e2a12 var(--fill));
+            border-radius: 10px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            background: #ffdb70;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .error { background: rgba(220,53,69,0.92); color: white; }
+        .success { background: rgba(46,125,50,0.92); color: white; }
+        .info { background: rgba(255,193,7,0.92); color: #1e2a1a; }
+        .completion-message {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.65), rgba(30,20,5,0.75));
+            border-radius: 52px;
+            border: 2px solid rgba(255,215,0,0.7);
+        }
+        .completion-message h2 {
+            color: #ffdb70;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .completion-message p {
+            color: #f0e6c5;
+            font-size: 1rem;
+        }
+        .admin-panel {
+            margin-top: 28px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 48px;
+            padding: 12px 15px;
+            border-top: 1px solid #ffdb70;
+        }
+        .admin-toggle {
+            background: none;
+            border: none;
+            color: #ffdb70;
+            font-size: 0.75rem;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .admin-content {
+            display: none;
+            margin-top: 12px;
+        }
+        .admin-content.show { display: block; }
+        .admin-input {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #ffdb70;
+            border-radius: 40px;
+            color: white;
+        }
+        .admin-btn {
+            background: #ffdb70;
+            color: #1a4a2a;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            margin: 4px;
+            cursor: pointer;
+        }
+        .password-section {
+            background: rgba(0,0,0,0.5);
+            border-radius: 40px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .password-input {
+            background: #2c2c2c;
+            border: 1px solid #ffdb70;
+            padding: 10px;
+            border-radius: 40px;
+            color: white;
+            width: 100%;
+            margin: 8px 0;
+        }
+        .admin-dashboard {
+            background: rgba(0,0,0,0.4);
+            border-radius: 30px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .dashboard-title {
+            color: #ffdb70;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .dashboard-stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .dashboard-card {
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            padding: 10px;
+            text-align: center;
+            flex: 1;
+        }
+        .dashboard-card .label {
+            font-size: 0.65rem;
+            color: #ffdb70;
+        }
+        .dashboard-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+        }
+        .user-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 10px;
+        }
+        .user-item {
+            font-size: 0.7rem;
+            color: #ddd;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            font-family: monospace;
+        }
+        .user-count-badge {
+            background: #ffdb70;
+            color: #1a4a2a;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .admin-note {
+            font-size: 0.7rem;
+            color: #ffaa66;
+            text-align: center;
+            margin-top: 8px;
+        }
+        /* CLAIM SECTION - NO URL DISPLAYED */
+        .claim-section {
+            margin-top: 20px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 44px;
+            padding: 20px 16px;
+            border: 1px solid rgba(255,215,0,0.5);
+        }
+        .claim-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffdb70;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .math-captcha-box {
+            background: rgba(0,0,0,0.5);
+            padding: 16px;
+            border-radius: 40px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .math-question {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ffdb70;
+            font-family: monospace;
+            margin-bottom: 12px;
+        }
+        .math-input {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            font-size: 1.2rem;
+            background: #2c2c2c;
+            border: 2px solid #ffdb70;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+        }
+        .claim-btn {
+            background: linear-gradient(95deg, #ffaa33, #ffdb70);
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 12px;
+            color: #1e3a2a;
+            transition: 0.2s;
+        }
+        .claim-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            background: linear-gradient(95deg, #aa8833, #886622);
+        }
+        .claim-btn:active:not(:disabled) { transform: scale(0.97); }
+        .captcha-success-badge {
+            color: #a5d6a7;
+            font-size: 0.7rem;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+        .social-icon {
+            background: rgba(0,0,0,0.6);
+            border-radius: 50px;
+            padding: 8px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            border: 1px solid #ffdb70;
+            transition: 0.2s;
+        }
+        .social-icon.whatsapp { background: #25D366; color: white; border: none; }
+        .social-icon.telegram { background: #0088cc; color: white; border: none; }
+        .social-icon:hover { transform: scale(1.02); opacity: 0.95; }
+        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 999; }
+        @media (max-width: 550px) {
+            .vault-card { padding: 20px 16px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="entryCaptchaOverlay" class="captcha-overlay">
+    <div class="captcha-modal">
+        <h3>🏵️ TERPALING RAYA 2026</h3>
+        <p>Sahkan anda manusia sebenar untuk membuka pintu rezeki.</p>
+        <div class="captcha-question" id="entryCaptchaQuestion">5 + 3 = ?</div>
+        <input type="text" id="entryCaptchaInput" class="captcha-input" placeholder="Masukkan jawapan" inputmode="numeric">
+        <div id="entryCaptchaError" class="captcha-error"></div>
+        <button id="verifyEntryBtn" class="verify-start-btn">🔒 Sahkan & Masuk</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="vault-card">
+        <div class="header">
+            <div class="ketupat-icon">🏵️</div>
+            <h1>TERPALING RAYA 2026</h1>
+            <div class="subtitle">✦ Buka pintu rezeki • Claim Duit Raya ✦</div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">👥 Pengunjung<br><span class="stat-number" id="totalVisitors">0</span></div>
+            <div class="stat-item">🎲 Game Selesai<br><span class="stat-number" id="totalClaims">0</span></div>
+            <div class="stat-item">✅ Berjaya<br><span class="stat-number" id="successClaims">0</span></div>
+        </div>
+
+        <div class="progress-steps">
+            <div class="step" id="step1"><div class="step-number">1</div><div class="step-label">Teka-Teki</div></div>
+            <div class="step" id="step2"><div class="step-number">2</div><div class="step-label">Nombor Rahsia</div></div>
+            <div class="step" id="step3"><div class="step-number">3</div><div class="step-label">Buka Pintu</div></div>
+        </div>
+
+        <div id="stepContent"></div>
+
+        <!-- CLAIM SECTION - URL TERSEMBUNYI, TIDAK DIPAPARKAN -->
+        <div class="claim-section" id="claimSection" style="display: none;">
+            <div class="claim-title">🧧 CLAIM DUIT RAYA 🧧</div>
+            <div id="mathCaptchaContainer">
+                <div class="math-captcha-box">
+                    <div class="math-question" id="mathCaptchaQuestion">12 + 7 = ?</div>
+                    <input type="text" id="mathCaptchaAnswer" class="math-input" placeholder="Masukkan jawapan captcha" inputmode="numeric">
+                    <div id="mathCaptchaError" style="color:#ffaa66; font-size:0.7rem; margin-top:5px;"></div>
+                    <div id="captchaSuccessBadge" class="captcha-success-badge" style="display: none;">✅ Captcha Sah! Sedia untuk claim</div>
+                </div>
+            </div>
+            <!-- TIADA LAGI BOX YANG MEMAPARKAN LINK URL -->
+            <button id="claimDuitRayaBtn" class="claim-btn" disabled>🔒 Selesaikan Captcha Dahulu</button>
+            <div id="claimMessage" style="margin-top: 12px; font-size:0.8rem; text-align:center;"></div>
+            
+            <!-- Social Media Buttons -->
+            <div class="social-buttons">
+                <a href="https://chat.whatsapp.com/KhWEqIIizq4GKDdPQGb6Rf?mode=gi_t" target="_blank" class="social-icon whatsapp">💬 WhatsApp</a>
+                <a href="https://t.me/mehduitraya" target="_blank" class="social-icon telegram">✈️ Telegram</a>
+            </div>
+        </div>
+
+        <div class="admin-panel">
+            <button class="admin-toggle" onclick="toggleAdminPrompt()">🔧 Admin Dashboard (Protected)</button>
+            <div id="adminContent" class="admin-content">
+                <div id="adminLockSection">
+                    <div class="password-section">
+                        <input type="password" id="adminPasswordInput" class="password-input" placeholder="Masukkan kata laluan admin" autocomplete="off">
+                        <button class="admin-btn" onclick="verifyAdminPassword()">Sahkan & Buka Panel</button>
+                        <div id="passwordErrorMsg" style="color:#ffaa66; font-size:0.7rem; margin-top:5px;"></div>
+                    </div>
+                </div>
+                <div id="adminToolsSection" style="display:none;">
+                    <div class="admin-dashboard">
+                        <div class="dashboard-title">📊 LIVE DASHBOARD - TERPALING RAYA 2026</div>
+                        <div class="dashboard-stats">
+                            <div class="dashboard-card"><div class="label">👥 Jumlah Pengunjung</div><div class="value" id="adminTotalVisitors">0</div></div>
+                            <div class="dashboard-card"><div class="label">🎲 Game Selesai</div><div class="value" id="adminTotalClaims">0</div></div>
+                            <div class="dashboard-card"><div class="label">✅ Berjaya</div><div class="value" id="adminSuccessClaims">0</div></div>
+                        </div>
+                        <div class="dashboard-title">👤 Pengguna Berjaya Masuk Sistem <span class="user-count-badge" id="userCountBadge">0</span></div>
+                        <div class="user-list" id="userListContainer"><div class="user-item">Loading...</div></div>
+                        <button class="admin-btn" onclick="refreshDashboardData()" style="margin-top:10px; width:100%;">🔄 Refresh Data</button>
+                        <div style="margin-top:15px;">
+                            <label style="color:#ffdb70; font-size:0.7rem;">✏️ Tukar URL Duit Raya (Tersembunyi):</label>
+                            <input type="text" id="adminUrlInput" class="admin-input" placeholder="https://links.tngdigital.com.my/...">
+                            <button class="admin-btn" onclick="updatePaymentUrl()">💾 Simpan URL Baru</button>
+                            <div style="font-size:0.65rem; color:#ffaa66; margin-top:4px;">⚠️ URL tidak dipaparkan kepada pengguna. Hanya aktif selepas captcha.</div>
+                        </div>
+                    </div>
+                    <button class="admin-btn" onclick="resetGameProgress()">🔄 Reset Game</button>
+                    <button class="admin-btn" onclick="resetAllClaimData()">⚠️ Reset Semua Data</button>
+                    <div id="adminMsg" style="color:#ffdb70; font-size:0.7rem; margin-top:6px;"></div>
+                    <button class="admin-btn" onclick="lockAdminPanel()" style="background:#aa6f20;">🔒 Kunci Panel</button>
+                    <div class="admin-note">📌 Password Admin: <strong style="color:#ffdb70;">RayaVault@2026#BukaPintuRezeki!</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<canvas id="confettiCanvas"></canvas>
+
+<script>
+    (function() {
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    })();
+
+    const STORAGE = {
+        visitors: 'tr_visitors_final',
+        totalClaimsMade: 'tr_total_claims',
+        successClaims: 'tr_success_unique',
+        userClaimed: 'tr_user_claimed_flag',
+        gameCompleted: 'tr_game_done',
+        captchaVerified: 'tr_captcha_session',
+        userAccessList: 'tr_user_access_list_v2',
+        paymentUrl: 'tr_payment_url_hidden'
+    };
+    
+    const MAX_USER_RECORDS = 1000;
+    const ADMIN_PASSWORD = "RayaVault@2026#BukaPintuRezeki!";
+    // REAL TNG eWallet LINK (Tersembunyi - tidak dipaparkan di HTML)
+    const DEFAULT_PAYMENT_URL = "https://links.tngdigital.com.my/moneypacket/0C0R0FrXPe7ZhRc7CdqT";
+    
+    let currentStep = 1;
+    let completedSteps = {1: false, 2: false, 3: false};
+    let currentRiddleIdx = 0;
+    const secretCode = "240624";
+    let gameFinished = false;
+    let totalVisitors = 0, totalClaimsAttempt = 0, successUniqueClaims = 0;
+    let currentMathCaptchaAnswer = 0;
+    let isMathCaptchaVerified = false;
+    
+    const riddles = [
+        { q: "Bulan apa umat Islam berpuasa sebelum Syawal?", opts: ["Ramadhan", "Muharram", "Safar", "Rabiul Awwal"], ans: "Ramadhan" },
+        { q: "Berapa hari raya disambut secara rasmi di Malaysia?", opts: ["1 hari", "2 hari", "3 hari", "Seminggu"], ans: "2 hari" },
+        { q: "Kuih raya tradisional yang rangup dan berwarna putih?", opts: ["Tart Nenas", "Kuih Bangkit", "Biskut Cornflakes", "Semperit"], ans: "Kuih Bangkit" }
+    ];
+    
+    let currentEntryCaptchaAnswer = 0;
+    function generateEntryCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        const op = Math.random() > 0.5 ? '+' : '-';
+        let question, answer;
+        if (op === '+') { question = `${num1} + ${num2} = ?`; answer = num1 + num2; }
+        else { if (num1 >= num2) { question = `${num1} - ${num2} = ?`; answer = num1 - num2; } else { question = `${num2} - ${num1} = ?`; answer = num2 - num1; } }
+        return { question, answer };
+    }
+    function refreshEntryCaptcha() { const c = generateEntryCaptcha(); document.getElementById('entryCaptchaQuestion').innerHTML = c.question; currentEntryCaptchaAnswer = c.answer; document.getElementById('entryCaptchaInput').value = ''; document.getElementById('entryCaptchaError').innerHTML = ''; }
+    
+    function generateMathCaptcha() {
+        const num1 = Math.floor(Math.random() * 20) + 5;
+        const num2 = Math.floor(Math.random() * 15) + 3;
+        const op = Math.random() > 0.5 ? '+' : '-';
+        let question, ans;
+        if(op === '+') { question = `${num1} + ${num2}`; ans = num1 + num2; }
+        else { if(num1 >= num2) { question = `${num1} - ${num2}`; ans = num1 - num2; } else { question = `${num2} - ${num1}`; ans = num2 - num1; } }
+        return { q: question + " = ?", ans };
+    }
+    
+    function refreshMathCaptcha() {
+        const c = generateMathCaptcha();
+        document.getElementById('mathCaptchaQuestion').innerHTML = c.q;
+        currentMathCaptchaAnswer = c.ans;
+        document.getElementById('mathCaptchaAnswer').value = '';
+        document.getElementById('mathCaptchaError').innerHTML = '';
+        isMathCaptchaVerified = false;
+        const claimBtn = document.getElementById('claimDuitRayaBtn');
+        if(claimBtn) {
+            claimBtn.disabled = true;
+            claimBtn.innerHTML = "🔒 Selesaikan Captcha Dahulu";
+        }
+        const badge = document.getElementById('captchaSuccessBadge');
+        if(badge) badge.style.display = 'none';
+    }
+    
+    function verifyMathCaptcha() {
+        const userAnswer = parseInt(document.getElementById('mathCaptchaAnswer').value);
+        const errorDiv = document.getElementById('mathCaptchaError');
+        const badge = document.getElementById('captchaSuccessBadge');
+        const claimBtn = document.getElementById('claimDuitRayaBtn');
+        
+        if(isNaN(userAnswer)) {
+            errorDiv.innerText = "❌ Sila masukkan nombor";
+            isMathCaptchaVerified = false;
+            if(claimBtn) { claimBtn.disabled = true; claimBtn.innerHTML = "🔒 Selesaikan Captcha Dahulu"; }
+            if(badge) badge.style.display = 'none';
+            return;
+        }
+        
+        if(userAnswer === currentMathCaptchaAnswer) {
+            errorDiv.innerText = "";
+            isMathCaptchaVerified = true;
+            if(claimBtn) {
+                claimBtn.disabled = false;
+                claimBtn.innerHTML = "🎁 CLAIM SEKARANG 🎁";
+            }
+            if(badge) {
+                badge.style.display = 'flex';
+                badge.innerHTML = "✅ Captcha Sah! Sedia untuk claim";
+            }
+        } else {
+            errorDiv.innerText = "❌ Jawapan captcha salah! Cuba semula.";
+            isMathCaptchaVerified = false;
+            if(claimBtn) { claimBtn.disabled = true; claimBtn.innerHTML = "🔒 Selesaikan Captcha Dahulu"; }
+            if(badge) badge.style.display = 'none';
+        }
+    }
+    
+    // URL tersembunyi - tidak dipaparkan di mana-mana dalam HTML
+    function getPaymentUrl() { 
+        return localStorage.getItem(STORAGE.paymentUrl) || DEFAULT_PAYMENT_URL; 
+    }
+    
+    function updatePaymentUrl() {
+        let newUrl = document.getElementById('adminUrlInput').value.trim();
+        if(newUrl === "") { showAdminMsg("URL tidak boleh kosong!"); return; }
+        if(!newUrl.startsWith("http")) newUrl = "https://" + newUrl;
+        localStorage.setItem(STORAGE.paymentUrl, newUrl);
+        showAdminMsg("✅ URL duit raya telah dikemaskini (tersembunyi)!");
+    }
+    
+    function generateUserHash() { let raw = `${navigator.userAgent}|${screen.width}x${screen.height}|${Intl.DateTimeFormat().resolvedOptions().timeZone}|${navigator.language}|${Date.now()}`; let hash=0; for(let i=0;i<raw.length;i++){ hash=((hash<<5)-hash)+raw.charCodeAt(i); hash|=0; } return Math.abs(hash).toString(16); }
+    function recordUserAccess() { let list=JSON.parse(localStorage.getItem(STORAGE.userAccessList)||'[]'); let hash=generateUserHash(); let idx=list.findIndex(u=>u.hash===hash.substring(0,12)); if(idx===-1){ list.unshift({hash:hash.substring(0,12), time:new Date().toLocaleString('ms-MY'), ua:navigator.userAgent.substring(0,40)}); if(list.length>MAX_USER_RECORDS) list=list.slice(0,MAX_USER_RECORDS); localStorage.setItem(STORAGE.userAccessList,JSON.stringify(list)); } }
+    function refreshDashboardData(){ let list=JSON.parse(localStorage.getItem(STORAGE.userAccessList)||'[]'); let container=document.getElementById('userListContainer'); if(container) container.innerHTML=list.length?list.map(u=>`<div class="user-item">🕐 ${u.time} | 🔑 ${u.hash}</div>`).join(''):'<div class="user-item">✨ Tiada rekod pengguna lagi ✨</div>'; document.getElementById('userCountBadge').innerText=list.length; document.getElementById('adminTotalVisitors').innerText=totalVisitors; document.getElementById('adminTotalClaims').innerText=totalClaimsAttempt; document.getElementById('adminSuccessClaims').innerText=successUniqueClaims; }
+    function loadStats(){ totalVisitors=parseInt(localStorage.getItem(STORAGE.visitors)||"0"); totalClaimsAttempt=parseInt(localStorage.getItem(STORAGE.totalClaimsMade)||"0"); successUniqueClaims=parseInt(localStorage.getItem(STORAGE.successClaims)||"0"); updateStatsUI(); }
+    function updateStatsUI(){ document.getElementById('totalVisitors').innerText=totalVisitors; document.getElementById('totalClaims').innerText=totalClaimsAttempt; document.getElementById('successClaims').innerText=successUniqueClaims; }
+    function incrementVisitor(){ if(!sessionStorage.getItem('vis_counted_tr')){ totalVisitors++; localStorage.setItem(STORAGE.visitors,totalVisitors); sessionStorage.setItem('vis_counted_tr','1'); updateStatsUI(); recordUserAccess(); } }
+    function incrementGameComplete(){ totalClaimsAttempt++; localStorage.setItem(STORAGE.totalClaimsMade,totalClaimsAttempt); updateStatsUI(); }
+    function incrementSuccess(){ successUniqueClaims++; localStorage.setItem(STORAGE.successClaims,successUniqueClaims); updateStatsUI(); }
+    function hasUserCompleted(){ return localStorage.getItem(STORAGE.userClaimed)==='true'; }
+    function setUserCompleted(){ localStorage.setItem(STORAGE.userClaimed,'true'); }
+    function showAdminMsg(msg){ let d=document.getElementById('adminMsg'); if(d){ d.innerText=msg; setTimeout(()=>d.innerText='',3000); } }
+    function resetAllClaimData(){ if(confirm("⚠️ WARNING: Reset semua data?")){ localStorage.removeItem(STORAGE.userClaimed); localStorage.removeItem(STORAGE.successClaims); localStorage.removeItem(STORAGE.totalClaimsMade); localStorage.removeItem(STORAGE.userAccessList); totalClaimsAttempt=0; successUniqueClaims=0; totalVisitors=0; localStorage.setItem(STORAGE.visitors,"0"); localStorage.setItem(STORAGE.totalClaimsMade,"0"); localStorage.setItem(STORAGE.successClaims,"0"); updateStatsUI(); if(currentStep===4) renderStep(); refreshDashboardData(); showAdminMsg("Semua data direset."); } }
+    function resetGameProgress(){ currentStep=1; completedSteps={1:false,2:false,3:false}; currentRiddleIdx=0; gameFinished=false; localStorage.removeItem(STORAGE.gameCompleted); renderStep(); showFloatingMsg("Game progress telah direset. Cuba lagi!", "success"); document.getElementById('claimSection').style.display='none'; }
+    function verifyAdminPassword(){ if(document.getElementById('adminPasswordInput').value===ADMIN_PASSWORD){ document.getElementById('passwordErrorMsg').innerText="✅ Akses dibenarkan!"; document.getElementById('adminLockSection').style.display='none'; document.getElementById('adminToolsSection').style.display='block'; refreshDashboardData(); document.getElementById('adminUrlInput').value=getPaymentUrl(); } else { document.getElementById('passwordErrorMsg').innerText="❌ Kata laluan salah!"; } }
+    function lockAdminPanel(){ document.getElementById('adminLockSection').style.display='block'; document.getElementById('adminToolsSection').style.display='none'; document.getElementById('adminPasswordInput').value=''; document.getElementById('passwordErrorMsg').innerText=''; document.getElementById('adminContent').classList.remove('show'); }
+    function toggleAdminPrompt(){ let ac=document.getElementById('adminContent'); ac.classList.toggle('show'); if(ac.classList.contains('show')){ document.getElementById('adminLockSection').style.display='block'; document.getElementById('adminToolsSection').style.display='none'; } }
+    function verifyEntryCaptcha(){ let ans=parseInt(document.getElementById('entryCaptchaInput').value); if(isNaN(ans)){ document.getElementById('entryCaptchaError').innerHTML="❌ Sila masukkan nombor."; return false; } if(ans===currentEntryCaptchaAnswer){ sessionStorage.setItem(STORAGE.captchaVerified,'true'); document.getElementById('entryCaptchaOverlay').style.display='none'; initGameCore(); return true; } else { document.getElementById('entryCaptchaError').innerHTML="❌ Jawapan salah!"; refreshEntryCaptcha(); return false; } }
+    
+    function initGameCore(){ loadStats(); incrementVisitor(); let saved=localStorage.getItem(STORAGE.gameCompleted); if(saved==='true'){ completedSteps={1:true,2:true,3:true}; currentStep=4; gameFinished=true; } renderStep(); }
+    
+    if(sessionStorage.getItem(STORAGE.captchaVerified)==='true'){ document.getElementById('entryCaptchaOverlay').style.display='none'; initGameCore(); } else { refreshEntryCaptcha(); document.getElementById('verifyEntryBtn').onclick=verifyEntryCaptcha; }
+    
+    function renderStep(){ let container=document.getElementById('stepContent'); if(currentStep===1) container.innerHTML=renderStep1(); else if(currentStep===2) container.innerHTML=renderStep2(); else if(currentStep===3) container.innerHTML=renderStep3(); else if(currentStep===4){ container.innerHTML=renderCompletionMessage(); document.getElementById('claimSection').style.display='block'; refreshMathCaptcha(); } updateProgressUI(); if(currentStep===3) attachSliderListener(); }
+    
+    function renderStep1(){ let r=riddles[currentRiddleIdx]; let optsHtml=r.opts.map(opt=>`<div class="option-btn" onclick="checkAnswer('${opt.replace(/'/g,"\\'")}')">${opt}</div>`).join(''); return `<div class="puzzle-section"><div style="color:#ffdb70; font-size:1.1rem; margin-bottom:18px;">❓ ${r.q}</div><div class="options">${optsHtml}</div><div style="margin-top:12px; color:#ffdb80;">Soalan ${currentRiddleIdx+1}/${riddles.length}</div></div>`; }
+    function renderStep2(){ return `<div class="puzzle-section"><div style="text-align:center;"><div style="background:rgba(0,0,0,0.55); padding:15px; border-radius:28px; margin-bottom:15px;">🔐 <strong style="color:#ffdb70;">Nombor Rahsia 6 digit</strong><br><span style="font-size:0.75rem;">Petunjuk: Tarikh Raya Aidilfitri 2026 (ddmmyy) = 240624</span></div><input type="text" id="secretInput" class="number-input" maxlength="6" placeholder="******" inputmode="numeric"><button class="claim-main-btn" style="margin-top:18px; width:100%; background:linear-gradient(95deg, #ffdb70, #ffaa33); border:none; padding:16px; border-radius:60px; font-weight:800; font-size:1.2rem; cursor:pointer; color:#1e3a2a;" onclick="verifyNumber()">Sah & Buka Kunci</button></div></div>`; }
+    function renderStep3(){ return `<div class="puzzle-section"><div class="vault-door"><div class="door-handle">🔒</div><div style="margin:12px 0; color:#ffdb70;">Tolak pintu vault untuk buka rezeki</div></div><div class="slider-container"><input type="range" id="vaultSlider" min="0" max="100" value="0"><div class="slider-value" id="sliderPercent" style="color:#ffdb70;">0%</div></div></div>`; }
+    function renderCompletionMessage(){ let already=hasUserCompleted(); if(!already){ incrementGameComplete(); incrementSuccess(); setUserCompleted(); triggerConfetti(); } return `<div class="completion-message"><h2>🏆 TAHNIAH! 🏆</h2><p>Anda berjaya membuka pintu rezeki!</p><p style="margin-top:10px;">✨ Kini anda layak untuk CLAIM DUIT RAYA ✨</p></div>`; }
+    
+    function verifyNumber(){ let val=document.getElementById('secretInput').value; if(val===secretCode){ completedSteps[2]=true; currentStep=3; renderStep(); showFloatingMsg("✅ Nombor rahsia tepat! Tolak pintu vault.", "success"); } else { showFloatingMsg("❌ Nombor rahsia salah! Cuba 240624", "error"); } }
+    function checkAnswer(selected){ let cr=riddles[currentRiddleIdx]; if(selected===cr.ans){ currentRiddleIdx++; if(currentRiddleIdx===riddles.length){ completedSteps[1]=true; currentStep=2; renderStep(); showFloatingMsg("🎉 Teka-teki habis! Masukkan nombor rahsia.", "success"); } else renderStep(); } else { showFloatingMsg("Jawapan salah! Cuba lagi.", "error"); currentRiddleIdx=0; renderStep(); } }
+    function attachSliderListener(){ let slider=document.getElementById('vaultSlider'); if(slider&&!slider._listenerAttached){ slider._listenerAttached=true; slider.addEventListener('input',function(e){ let val=parseInt(e.target.value); slider.style.setProperty('--fill',val+'%'); let percentSpan=document.getElementById('sliderPercent'); if(percentSpan) percentSpan.innerText=val+'%'; if(val===100&&!completedSteps[3]){ completedSteps[3]=true; currentStep=4; renderStep(); triggerConfetti(); showFloatingMsg("🔓 Vault terbuka! Kini claim duit raya!", "success"); } }); } }
+    function updateProgressUI(){ for(let i=1;i<=3;i++){ let el=document.getElementById(`step${i}`); if(el){ el.classList.remove('active','completed'); if(completedSteps[i]) el.classList.add('completed'); else if(currentStep===i) el.classList.add('active'); } } }
+    function showFloatingMsg(msg,type){ let container=document.getElementById('stepContent'); let old=document.querySelector('.floating-temp'); if(old) old.remove(); let div=document.createElement('div'); div.className=`message ${type} floating-temp`; div.innerText=msg; container.appendChild(div); setTimeout(()=>div.remove(),2800); }
+    function triggerConfetti(){ let canvas=document.getElementById('confettiCanvas'); let ctx=canvas.getContext('2d'); canvas.width=window.innerWidth; canvas.height=window.innerHeight; let particles=[]; for(let i=0;i<150;i++) particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height-canvas.height, size:Math.random()*5+3, speedY:Math.random()*5+3, speedX:Math.random()*2-1, color:`hsl(${Math.random()*360},80%,60%)` }); function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); let active=false; particles.forEach(p=>{ p.y+=p.speedY; p.x+=p.speedX; if(p.y<canvas.height) active=true; ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size,p.size); }); if(active) requestAnimationFrame(animate); else ctx.clearRect(0,0,canvas.width,canvas.height); } animate(); setTimeout(()=>ctx.clearRect(0,0,canvas.width,canvas.height),2800); }
+    
+    // CLAIM HANDLER - hanya akan buka URL selepas captcha disahkan
+    function handleClaim() {
+        if(!isMathCaptchaVerified) {
+            document.getElementById('claimMessage').innerHTML = "⚠️ Selesaikan captcha matematik terlebih dahulu!";
+            document.getElementById('claimMessage').style.color = "#ffaa66";
+            return;
+        }
+        // URL tersembunyi, tidak dipaparkan di mana-mana
+        let paymentUrl = getPaymentUrl();
+        window.open(paymentUrl, '_blank');
+        document.getElementById('claimMessage').innerHTML = "🎉 Terima kasih! Duit Raya sedang diproses. Semoga hari raya penuh berkah! 🎉";
+        document.getElementById('claimMessage').style.color = "#ffdb70";
+        triggerConfetti();
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const claimBtn = document.getElementById('claimDuitRayaBtn');
+        if(claimBtn) claimBtn.addEventListener('click', handleClaim);
+        const mathInput = document.getElementById('mathCaptchaAnswer');
+        if(mathInput) mathInput.addEventListener('input', verifyMathCaptcha);
+        // Tiada lagi paparan URL kepada pengguna
+    });
+    
+    window.updatePaymentUrl = updatePaymentUrl;
+    window.verifyNumber = verifyNumber;
+    window.checkAnswer = checkAnswer;
+    window.resetGameProgress = resetGameProgress;
+    window.resetAllClaimData = resetAllClaimData;
+    window.verifyAdminPassword = verifyAdminPassword;
+    window.lockAdminPanel = lockAdminPanel;
+    window.toggleAdminPrompt = toggleAdminPrompt;
+    window.refreshDashboardData = refreshDashboardData;
+</script>
+</body>
+</html>
